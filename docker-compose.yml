@@ -1,0 +1,21 @@
+# A local Postgres for development and tests. The image already carries pgvector, so vector
+# search later is one "CREATE EXTENSION vector" away. Data is kept in a named volume.
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: stock
+      POSTGRES_PASSWORD: stock
+      POSTGRES_DB: stock
+    ports:
+      # 54329 on this machine, so it never collides with another Postgres on 5432.
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - stock-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stock -d stock"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  stock-pg:

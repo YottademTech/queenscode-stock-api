@@ -1,0 +1,36 @@
+{
+  "name": "stock-count-server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "node --watch src/serve.ts",
+    "start": "node src/serve.ts",
+    "vercel-build": "node src/scripts/setup.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:up": "docker compose up -d --wait",
+    "db:generate": "drizzle-kit generate",
+    "db:setup": "node src/scripts/setup.ts",
+    "import:sheet": "node src/scripts/import-sheet.ts",
+    "stocktake": "node src/scripts/start-stocktake.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "@hono/node-server": "^2.1.11",
+    "@vercel/functions": "^3.11.4",
+    "drizzle-orm": "^0.45.4",
+    "hono": "^4.13.22",
+    "postgres": "^4.1.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.10",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.2"
+  }
+}

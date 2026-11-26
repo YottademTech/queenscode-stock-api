@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "lib": ["ES2024"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    // Node runs these files as they are, by stripping the types: nothing is compiled or emitted.
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    // Should a host compile these files instead of running them as they are, the ".ts" in each import becomes ".js".
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["src", "test", "drizzle.config.ts", "vitest.config.ts"]
+}
