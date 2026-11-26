@@ -2,9 +2,13 @@ import { sql } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { cors } from 'hono/cors';
-import type { Deps } from './deps.ts';
-import { handleRequest, statusOf, type Reply } from './http/rpc.ts';
+import type { Deps } from '../deps.ts';
+import { handleRequest, statusOf, type Reply } from './rpc.ts';
 
+/**
+ * The HTTP app over the server's parts. It lives here, not in src/app.ts: Vercel takes a file named
+ * app, index or server as the server's entry, app first, and the entry is src/index.ts.
+ */
 export function createApp(deps: Deps, allowedOrigins: string) {
   const app = new Hono();
   const origins = allowedOrigins.split(',').map((origin) => origin.trim()).filter(Boolean);

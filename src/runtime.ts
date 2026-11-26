@@ -1,4 +1,4 @@
-import { createApp } from './app.ts';
+import { createApp } from './http/app.ts';
 import type { Config } from './config.ts';
 import { openDatabase } from './db/client.ts';
 import { consoleLog, type Deps } from './deps.ts';

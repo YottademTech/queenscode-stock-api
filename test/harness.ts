@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { createApp } from '../src/app.ts';
+import { createApp } from '../src/http/app.ts';
 import { openDatabase, type Database } from '../src/db/client.ts';
 import { sheetOutbox } from '../src/db/schema.ts';
 import type { Deps } from '../src/deps.ts';

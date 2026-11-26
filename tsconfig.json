@@ -18,6 +18,8 @@
     "rewriteRelativeImportExtensions": true,
     "noEmit": true,
     "skipLibCheck": true,
+    // Named by folder as well as by name: Vercel's build does not find them by name alone.
+    "typeRoots": ["./node_modules/@types"],
     "types": ["node"]
   },
   "include": ["src", "test", "drizzle.config.ts", "vitest.config.ts"]

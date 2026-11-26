@@ -29,9 +29,11 @@ What it changes:
 
 ```
 src/
-  index.ts        starts everything: settings, database, HTTP, the Sheet worker
-  app.ts          the HTTP app (Hono): CORS, size limit, health check
   config.ts       every setting, read from the environment and checked on start
+  index.ts        the server as Vercel runs it: the app, handed over
+  serve.ts        the server as a process that stays running
+  runtime.ts      puts the parts together: database, Claude, Google, the HTTP app
+  http/app.ts     the HTTP app (Hono): CORS, size limit, health check
   http/rpc.ts     one request in, one reply out: the secret, the action table, the error format
   db/             schema.ts (the tables), client.ts, writes.ts (save-once and locking)
   shop/           which shop, its places and its open stocktake
