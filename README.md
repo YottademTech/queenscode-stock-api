@@ -90,12 +90,13 @@ The app is deployed from its own repository; this one becomes a second Vercel pr
 1. **Create the project.** In Vercel: Add New > Project, and import this repository. Leave Root
    Directory as it is. Vercel recognises a Hono app from `src/index.ts`. Let the first deployment
    fail if it starts: it has no database yet.
-2. **Add a database.** In the project: Storage (or the Marketplace) > Postgres > Neon. Choose the
-   **Frankfurt** region, the one `vercel.json` runs the server in, and connect it to the
-   project. It adds the connection settings: check under Settings > Environment Variables that
-   there is a `DATABASE_URL` (the pooled address, with `-pooler` in the host name) and a
-   `DATABASE_URL_UNPOOLED` (the direct one). If your provider names them differently, add those
-   two names yourself with the same values.
+2. **Add a database.** In the project: Storage (or the Marketplace) > Postgres > Neon, connected
+   to the project. Put it in the region named in `vercel.json` (`cle1`, Cleveland, beside Neon's
+   **us-east-2**), or change `vercel.json` to the Vercel region beside your database: every save
+   makes several trips to the database, and an ocean between them makes each one slow. Check under
+   Settings > Environment Variables that there is a `DATABASE_URL` (the pooled address, with
+   `-pooler` in the host name) and a `DATABASE_URL_UNPOOLED` (the same without `-pooler`). If your
+   provider names them differently, add those two names yourself with the same values.
 3. **Add the settings** under Settings > Environment Variables, for Production:
 
    | Name | Value |
