@@ -112,18 +112,19 @@ test('CHECK shows for a Low count until someone corrects it; REORDER at or below
   expect(await server.stockOf('RG-YEL')).toMatchObject({ total: 13, status: 'OK', review: '' });
 });
 
-test('a name lengthened by its size stays a valid name, and can be edited afterwards', async () => {
+test('a second size whose name would be too long is refused, never cut into a name another product has', async () => {
   const server = await testServer();
   const longName = `QBH ${'Very Long Product Name '.repeat(5).trim()}`;
   expect(longName).toHaveLength(118);
   await server.post('saveProduct', { requestId: 'long-name-0001', product: { ...noDetails, code: null, name: longName, size: '250ml', packSize: null, reorderLevel: null } });
-  // The same name in another size is another product, told apart by the size at the end of its name.
-  expect((await server.post('saveCounts', saveCounts([countRow({ productCode: null, newProduct: { ...noDetails, name: longName, size: '500ml family size' } })]))).ok).toBe(true);
 
-  const second = (await server.post('bootstrap')).data.products[3];
-  expect(second.name.length).toBeLessThanOrEqual(120);
-  expect(second.name).toMatch(/^QBH Very Long .* 500ml family size$/);
-  expect((await server.post('saveProduct', { requestId: 'long-name-0002', product: { ...noDetails, code: second.code, name: second.name, size: second.size, packSize: null, reorderLevel: null } })).ok).toBe(true);
+  for (let i = 0; i < 2; i++) {
+    const reply = await server.post('saveCounts', saveCounts([countRow({ productCode: null, newProduct: { ...noDetails, name: longName, size: '500ml' } })]));
+    expect(reply.error).toMatchObject({ code: 'invalid_request', message: expect.stringContaining('Shorten the name to 114 characters or fewer') });
+  }
+  const names = (await server.post('bootstrap')).data.products.map((product: { name: string }) => product.name);
+  expect(new Set(names).size).toBe(names.length);
+  expect(names).toHaveLength(3);
 });
 
 test('codes and names are made by the same rule here and in the Apps Script, and never as something Sheets rewrites', async () => {
@@ -145,7 +146,8 @@ test('codes and names are made by the same rule here and in the Apps Script, and
     for (const taken of [[], ['P-SEP-30', 'QBHCO-250', 'ITEM']]) {
       expect(makeProductCode(name, size, taken), `code for "${name}" ${size}`).toBe(theirCode(name, size, taken));
     }
-    expect(uniqueProductName(listed, { name, size }), `name for "${name}" ${size}`).toBe(theirName(listed, { name, size }));
-    expect(uniqueProductName(listed, { name, size }).length).toBeLessThanOrEqual(120);
+    // The same name, or the same refusal, from both.
+    const outcome = (make: () => string) => { try { return make(); } catch (error) { return `refused: ${(error as Error).message}`; } };
+    expect(outcome(() => uniqueProductName(listed, { name, size })), `name for "${name}" ${size}`).toBe(outcome(() => theirName(listed, { name, size })));
   }
 });

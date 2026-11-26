@@ -1,4 +1,6 @@
 // How products are told apart by name, and how a new product gets its code.
+import { AppError } from '../errors.ts';
+import { clip } from '../lib/text.ts';
 
 export function sameName(left: string, right: string): boolean {
   return normalizeName(left) === normalizeName(right);
@@ -22,13 +24,18 @@ export function matchProductByName<T extends Named>(products: readonly T[], deta
 const PRODUCT_NAME_MAX = 120;
 
 /**
- * Product names are unique: a second size of a listed product gets its size added, with the name
- * cut short if needed to stay a valid name.
+ * Product names are unique: a second size of a listed product gets its size added. When that makes
+ * the name too long it is refused, not cut short: two names cut at the same place would be the same name.
  */
 export function uniqueProductName(products: readonly Named[], details: Named): string {
   const taken = products.some((product) => sameName(product.name, details.name));
   if (!taken || !details.size) return details.name;
-  return `${details.name.slice(0, PRODUCT_NAME_MAX - 1 - details.size.length).trim()} ${details.size}`;
+  const sized = `${details.name} ${details.size}`;
+  if (sized.length > PRODUCT_NAME_MAX) {
+    throw new AppError('invalid_request', `"${clip(details.name, 40)}…" is already a product, and with the size ${details.size}`
+      + ` added the name is too long. Shorten the name to ${PRODUCT_NAME_MAX - 1 - details.size.length} characters or fewer, then save again.`);
+  }
+  return sized;
 }
 
 /** The start of a code that Google Sheets would read as a month, or as true or false. */
